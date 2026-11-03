@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSCommandPath
 $src = Join-Path $root 'src'
 $build = Join-Path $root 'build'
