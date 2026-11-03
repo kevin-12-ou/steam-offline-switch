@@ -4,9 +4,16 @@ $src = Join-Path $root 'src'
 $build = Join-Path $root 'build'
 $dist = Join-Path $root 'dist'
 
-$csc = 'C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe'
-$fwDir = 'C:\Windows\Microsoft.NET\Framework64\v4.0.30319'
-if (-not (Test-Path $csc)) { throw "找不到 .NET Framework 编译器: $csc" }
+$csc = $null
+$fwDir = $null
+foreach ($cand in @(
+    'C:\Windows\Microsoft.NET\Framework64\v4.0.30319',
+    'C:\Windows\Microsoft.NET\Framework\v4.0.30319'
+)) {
+    $exe = Join-Path $cand 'csc.exe'
+    if (Test-Path $exe) { $csc = $exe; $fwDir = $cand; break }
+}
+if (-not $csc) { throw "找不到 .NET Framework 4.x 编译器 (csc.exe)。请安装 .NET Framework 4.x。" }
 
 New-Item -ItemType Directory -Force -Path $dist | Out-Null
 

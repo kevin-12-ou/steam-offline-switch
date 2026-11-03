@@ -18,7 +18,7 @@ jobs:
       - name: Compile with system csc (.NET Framework 4.x)
         shell: pwsh
         run: |
-          powershell -ExecutionPolicy Bypass -File .\build.ps1
+          ./build.ps1
 
       - name: Verify output
         shell: pwsh
