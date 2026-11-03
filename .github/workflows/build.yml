@@ -1,0 +1,37 @@
+name: build
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compile with system csc (.NET Framework 4.x)
+        shell: pwsh
+        run: |
+          powershell -ExecutionPolicy Bypass -File .\build.ps1
+
+      - name: Verify output
+        shell: pwsh
+        run: |
+          $exe = 'dist\SteamOfflineSwitch.exe'
+          if (-not (Test-Path $exe)) { throw "未生成 $exe" }
+          $len = (Get-Item $exe).Length
+          if ($len -lt 10000) { throw "exe 体积异常: $len bytes" }
+          "OK: $exe  ($([math]::Round($len/1KB,1)) KB)"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SteamOfflineSwitch
+          path: dist/SteamOfflineSwitch.exe
+          if-no-files-found: error
